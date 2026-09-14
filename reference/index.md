@@ -1,0 +1,30 @@
+# Package index
+
+## All functions
+
+- [`buildAnnotation()`](https://alexankc.github.io/geneRosetta/reference/buildAnnotation.md)
+  : Build Merged Gene Annotation for Multiple Species
+- [`buildHumanAnnotation()`](https://alexankc.github.io/geneRosetta/reference/buildHumanAnnotation.md)
+  : Build Merged Human Gene Annotation
+- [`buildMouseAnnotation()`](https://alexankc.github.io/geneRosetta/reference/buildMouseAnnotation.md)
+  : Build Merged Mouse Gene Annotation
+- [`buildRatAnnotation()`](https://alexankc.github.io/geneRosetta/reference/buildRatAnnotation.md)
+  : Build Merged Rat Gene Annotation
+- [`.get_data_path()`](https://alexankc.github.io/geneRosetta/reference/dot-get_data_path.md)
+  : Get Persistent Data Path
+- [`getAnnotationBiomart()`](https://alexankc.github.io/geneRosetta/reference/getAnnotationBiomart.md)
+  : Get Gene Annotation from Ensembl BioMart
+- [`getAnnotationHGNChuman()`](https://alexankc.github.io/geneRosetta/reference/getAnnotationHGNChuman.md)
+  : Get Human Gene Annotation from HGNC Database
+- [`getAnnotationLogSummary()`](https://alexankc.github.io/geneRosetta/reference/getAnnotationLogSummary.md)
+  : Summarize and Export Annotation Build Logs
+- [`getAnnotationMGImouse()`](https://alexankc.github.io/geneRosetta/reference/getAnnotationMGImouse.md)
+  : Get Mouse Gene Annotation from MGI Database
+- [`getAnnotationNCBI()`](https://alexankc.github.io/geneRosetta/reference/getAnnotationNCBI.md)
+  : Get Gene Annotation from NCBI Gene Database
+- [`getAnnotationRGDrat()`](https://alexankc.github.io/geneRosetta/reference/getAnnotationRGDrat.md)
+  : Get Rat Gene Annotation from RGD Database
+- [`mapIDToSymbol()`](https://alexankc.github.io/geneRosetta/reference/mapIDToSymbol.md)
+  : Map Ensembl/NCBI IDs to gene symbols
+- [`mapSymbolToID()`](https://alexankc.github.io/geneRosetta/reference/mapSymbolToID.md)
+  : Map gene symbols to Ensembl IDs

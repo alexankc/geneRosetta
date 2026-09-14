@@ -1,0 +1,9 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  geneRosetta_tutorial: geneRosetta_tutorial.html
+last_built: 2026-09-14T10:59Z
+urls:
+  reference: https://alexankc.github.io/geneRosetta/reference
+  article: https://alexankc.github.io/geneRosetta/articles

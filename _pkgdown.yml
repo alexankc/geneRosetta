@@ -1,0 +1,32 @@
+url: https://alexankc.github.io/geneRosetta/
+
+template:
+  bootstrap: 5
+  bootswatch: cosmo
+
+navbar:
+  structure:
+    left: [home, tutorial, reference]
+    right: [search, github]
+  components:
+    tutorial:
+      text: Tutorial
+      href: articles/geneRosetta_tutorial.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    github:
+      icon: github
+      href: https://github.com/alexankc/geneRosetta
+
+home:
+  title: geneRosetta
+  description: Reliable gene symbol and ID harmonization with fresh multi-source annotations.
+
+articles:
+  - title: Getting Started
+    navbar: Tutorial
+    contents:
+      - geneRosetta_tutorial
+    sidebar:
+      structure: [links, toc]

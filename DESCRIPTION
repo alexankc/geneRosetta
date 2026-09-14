@@ -1,0 +1,43 @@
+Package: geneRosetta
+Title: Gene Annotation Retrieval and Mapping Utilities
+Version: 1.0.0
+Authors@R: 
+    person("Alexandros", "Karagiannopoulos", , "alexandros.karagiannopoulos@med.lu.se", role = c("aut", "cre"))
+Description: Reliable Gene Annotation Mapping. Retrieve, cache, and merge human, mouse, and rat gene annotations
+    from Ensembl BioMart, NCBI, and organism-specific authorities (HGNC, MGI,
+    RGD); map between gene symbols and stable identifiers with synonym-aware
+    matching and configurable multi-mapping resolution.
+License: MIT + file LICENSE
+URL: https://github.com/alexankc/geneRosetta
+BugReports: https://github.com/alexankc/geneRosetta/issues
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports:
+    biomaRt,
+    httr,
+    jsonlite,
+    cli,
+    readr,
+    stringi,
+    stringr,
+    dplyr,
+    tidyr,
+    purrr,
+    rlang,
+    stats,
+    tools,
+    utils
+Suggests:
+    testthat (>= 3.0.0),
+    curl,
+    withr,
+    quarto,
+    kableExtra,
+    fansi,
+    knitr
+VignetteBuilder: quarto
+Depends:
+    R (>= 4.1)
+Config/testthat/edition: 3

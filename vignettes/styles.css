@@ -1,0 +1,143 @@
+/*
+ * Styles for the geneRosetta vignette.
+ *
+ * The pkgdown site injects pkgdown/extra.css, which defines these same
+ * .pkg-callout rules. This file exists so the .qmd also renders correctly on
+ * its own (Quarto preview, RStudio "Render"), where extra.css is not loaded.
+ * Keep the callout colours here in sync with pkgdown/extra.css.
+ */
+
+:root {
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+  --radius-lg: 0.75rem;
+}
+
+/* --- Callouts --- */
+.pkg-callout {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-left-width: 4px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background-color: #ffffff;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.pkg-callout:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.pkg-callout-header {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1.25rem;
+  background-color: rgba(248, 250, 252, 0.6);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+
+.pkg-callout-header p {
+  margin: 0;
+}
+
+.pkg-callout-body,
+.pkg-callout-body-container {
+  padding: 1.25rem;
+  font-size: 1.05rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.pkg-callout-body>p:last-child {
+  margin-bottom: 0;
+}
+
+/* Note (Blue) */
+.pkg-callout-note {
+  border-left-color: #3b82f6;
+}
+
+.pkg-callout-note .pkg-callout-header {
+  background-color: rgba(59, 130, 246, 0.04);
+  color: #1d4ed8;
+}
+
+/* Tip (Emerald) */
+.pkg-callout-tip {
+  border-left-color: #10b981;
+}
+
+.pkg-callout-tip .pkg-callout-header {
+  background-color: rgba(16, 185, 129, 0.04);
+  color: #047857;
+}
+
+/* Important (Red) */
+.pkg-callout-important {
+  border-left-color: #ef4444;
+}
+
+.pkg-callout-important .pkg-callout-header {
+  background-color: rgba(239, 68, 68, 0.04);
+  color: #b91c1c;
+}
+
+/* Warning (Amber) */
+.pkg-callout-warning {
+  border-left-color: #f59e0b;
+}
+
+.pkg-callout-warning .pkg-callout-header {
+  background-color: rgba(245, 158, 11, 0.04);
+  color: #b45309;
+}
+
+/* Caution (Orange) */
+.pkg-callout-caution {
+  border-left-color: #f97316;
+}
+
+.pkg-callout-caution .pkg-callout-header {
+  background-color: rgba(249, 115, 22, 0.04);
+  color: #c2410c;
+}
+
+/* Console output blocks emitted by the message hook in the setup chunk. */
+pre.vignette-messages {
+  background-color: #f0f7ff;
+  color: #1e293b;
+  border: 1px solid #dbeafe;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+/* --- Code and Output Block Styling --- */
+
+/* 1. Input code block */
+div.sourceCode,
+.cell-code pre {
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: var(--radius-md, 0.5rem);
+}
+
+/* 2. Text & Console Output */
+.cell-output pre,
+div.cell-output-stdout pre,
+div.cell-output-stderr pre {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-left: 3px solid #94a3b8 !important;
+  color: #334155 !important;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem !important;
+}

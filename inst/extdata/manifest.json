@@ -1,0 +1,106 @@
+{
+  "snapshot_version": "2026-08-30",
+  "created_at": "2026-08-30T10:43:02Z",
+  "format_version": 1,
+  "species": ["human", "mouse", "rat"],
+  "r_version": "R version 4.5.2 (2025-10-31 ucrt)",
+  "package_version": "1.0.0",
+  "files": {
+    "Assembly_Reports/human_assembly_report.tsv.gz": {
+      "rows": 709,
+      "columns": ["sequence_name", "sequence_role", "assigned_molecule", "assigned_molecule_location_type", "genbank_accn", "relationship", "refseq_accn", "assembly_unit", "sequence_length", "ucsc_style_name"],
+      "uncompressed_size_bytes": 77566,
+      "compressed_size_bytes": 13501,
+      "uncompressed_sha256": "f309cab64e48fd5499763c97c2a225bfc00dffae15b988aabcc763a30c93406e",
+      "compressed_sha256": "6d8f0e9f71ee79adea225f4ab1b377af467e3139c71504ccd3e7a9730f37729a"
+    },
+    "Assembly_Reports/mouse_assembly_report.tsv.gz": {
+      "rows": 61,
+      "columns": ["sequence_name", "sequence_role", "assigned_molecule", "assigned_molecule_location_type", "genbank_accn", "relationship", "refseq_accn", "assembly_unit", "sequence_length", "ucsc_style_name"],
+      "uncompressed_size_bytes": 6146,
+      "compressed_size_bytes": 1380,
+      "uncompressed_sha256": "d8bc997b533a2b391388f8f2a2ba461836458dca243714c7bda592f64c80ad9c",
+      "compressed_sha256": "e76c779fae2b757d17e06f87101bcd46151ba3eee26d39241d3464d9a4c38d22"
+    },
+    "Assembly_Reports/rat_assembly_report.tsv.gz": {
+      "rows": 77,
+      "columns": ["sequence_name", "sequence_role", "assigned_molecule", "assigned_molecule_location_type", "genbank_accn", "relationship", "refseq_accn", "assembly_unit", "sequence_length", "ucsc_style_name"],
+      "uncompressed_size_bytes": 8557,
+      "compressed_size_bytes": 1377,
+      "uncompressed_sha256": "28ccf08d92a25545147806a24492acae985b5725b75d7ed49d8db522ca5d925e",
+      "compressed_sha256": "5dfe1326041eee3fbff4a21bace3c1077435ce1bc5aeccbfa766760d65e3b374"
+    },
+    "Ensembl_Genes/human_biomart_mapping.tsv.gz": {
+      "rows": 86411,
+      "columns": ["ensembl_id", "gene_symbol", "gene_biotype", "chromosome", "gene_start", "gene_end", "strand", "gene_description", "gene_synonyms"],
+      "uncompressed_size_bytes": 10136430,
+      "compressed_size_bytes": 2633706,
+      "uncompressed_sha256": "153402cbc0c400005d2ef69c171765aace5db87e40a06b12f6e2c91dc2516608",
+      "compressed_sha256": "8c2d520f95462e53f24bbca24ee9227c6bfd7c4950d94e260abaac98cab19c64"
+    },
+    "Ensembl_Genes/mouse_biomart_mapping.tsv.gz": {
+      "rows": 78348,
+      "columns": ["ensembl_id", "gene_symbol", "gene_biotype", "chromosome", "gene_start", "gene_end", "strand", "gene_description", "gene_synonyms"],
+      "uncompressed_size_bytes": 10502328,
+      "compressed_size_bytes": 2556948,
+      "uncompressed_sha256": "59c9ca0b6c2bb83919e2645fafe509da0342f2e36e04644ec47c6a93334cf9be",
+      "compressed_sha256": "992f2f6d9fd9dbfec4a7f0fe8aafcaf6f15cee8ddaaaec8a913cf0172dba6590"
+    },
+    "Ensembl_Genes/rat_biomart_mapping.tsv.gz": {
+      "rows": 43360,
+      "columns": ["ensembl_id", "gene_symbol", "gene_biotype", "chromosome", "gene_start", "gene_end", "strand", "gene_description", "gene_synonyms"],
+      "uncompressed_size_bytes": 4669507,
+      "compressed_size_bytes": 1347670,
+      "uncompressed_sha256": "62e8a1ee6b7834f476da9484c2ef8f73152ddae3ade4ee7e58acc7d602bc0462",
+      "compressed_sha256": "466ff65052a2b976e73fe68ba82daa090438e9f72592e228180c3ff3142305cc"
+    },
+    "HGNC_human_Genes/human_hgnc_mapping.tsv.gz": {
+      "rows": 45019,
+      "columns": ["hgnc_id", "gene_symbol", "gene_synonyms", "ncbi_id", "ensembl_id"],
+      "uncompressed_size_bytes": 2199676,
+      "compressed_size_bytes": 826280,
+      "uncompressed_sha256": "3a06c31681d47bf8ffed5059539e9247ae8d03fc964565b73fc5c7bf9311564a",
+      "compressed_sha256": "861d1c4ab877e368fe5dc29ef9eb8e21fb241f4ea571d0554c553b7f7fa3966c"
+    },
+    "MGI_mouse_genes/mouse_mgi_mapping.tsv.gz": {
+      "rows": 124653,
+      "columns": ["mgi_id", "gene_symbol", "gene_biotype", "chromosome", "gene_start", "gene_end", "strand", "gene_synonyms", "ncbi_id", "ensembl_id", "gene_description"],
+      "uncompressed_size_bytes": 12965473,
+      "compressed_size_bytes": 3036707,
+      "uncompressed_sha256": "eabf6bcac74921cb85134f948eeb0035b43f22488215bad511b90d7c0959cfdc",
+      "compressed_sha256": "f9aad59c4c3e1c4981fcb757ed45cc0d23869281d1ea34ffcb913a4576f3fcff"
+    },
+    "NCBI_Genes/human_ncbi_mapping.tsv.gz": {
+      "rows": 193870,
+      "columns": ["ncbi_id", "gene_symbol", "gene_synonyms", "ensembl_id"],
+      "uncompressed_size_bytes": 6233369,
+      "compressed_size_bytes": 1510278,
+      "uncompressed_sha256": "f59257294c395d12092086195815d00a456f840dc1661727e4fd65e7a9a52deb",
+      "compressed_sha256": "2c1c7d9f3cf05dfab275a392799eb07f5d07a90afc121d8de996c9d65ec3b6c8"
+    },
+    "NCBI_Genes/mouse_ncbi_mapping.tsv.gz": {
+      "rows": 112313,
+      "columns": ["ncbi_id", "gene_symbol", "gene_synonyms", "ensembl_id"],
+      "uncompressed_size_bytes": 3879692,
+      "compressed_size_bytes": 1122447,
+      "uncompressed_sha256": "e9d58b892df3568b7ffc20f339f0b8e9cd6326d523a58fa888a958434bd7d810",
+      "compressed_sha256": "1f88f93349da56e6da5414ea8318be0d27bc763927a23afdaa86f9ed60436ce9"
+    },
+    "NCBI_Genes/rat_ncbi_mapping.tsv.gz": {
+      "rows": 47812,
+      "columns": ["ncbi_id", "gene_symbol", "gene_synonyms", "ensembl_id"],
+      "uncompressed_size_bytes": 1727375,
+      "compressed_size_bytes": 505845,
+      "uncompressed_sha256": "a05af9ebab7e5a2183b8c7db2dfa9c3a8a8ae9f63128170e9d829e0a61989121",
+      "compressed_sha256": "0821b016a383179c4fa036c378229309d99239c301b11cc95f3eb0af081aa79f"
+    },
+    "RGD_rat_genes/rat_rgd_mapping.tsv.gz": {
+      "rows": 83997,
+      "columns": ["rgd_id", "gene_symbol", "gene_synonyms", "gene_biotype", "ensembl_id", "ncbi_id", "gene_description", "chromosome", "gene_start", "gene_end", "strand"],
+      "uncompressed_size_bytes": 9371085,
+      "compressed_size_bytes": 2145532,
+      "uncompressed_sha256": "7dbd240fdb17812fbcdb6874b6114b514fb3beaaa75cd5fe7252c39d708e578c",
+      "compressed_sha256": "83b5281a05069f72170d4fd8f051a46f36145d3fd0e41a8dc73a3afc5924793f"
+    }
+  }
+}

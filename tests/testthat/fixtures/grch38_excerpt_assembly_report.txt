@@ -1,0 +1,10 @@
+# Fixture: excerpt of GCA_000001405.29_GRCh38.p14_assembly_report.txt
+# Sequence-Name	Sequence-Role	Assigned-Molecule	Assigned-Molecule-Location/Type	GenBank-Accn	Relationship	RefSeq-Accn	Assembly-Unit	Sequence-Length	UCSC-style-name
+1	assembled-molecule	1	Chromosome	CM000663.2	=	NC_000001.11	Primary Assembly	248956422	chr1
+14	assembled-molecule	14	Chromosome	CM000676.2	=	NC_000014.9	Primary Assembly	107043718	chr14
+X	assembled-molecule	X	Chromosome	CM000685.2	=	NC_000023.11	Primary Assembly	156040895	chrX
+MT	assembled-molecule	MT	Mitochondrion	J01415.2	=	NC_012920.1	non-nuclear	16569	chrM
+HSCHR14_CTG4_UNLOCALIZED	unlocalized-scaffold	14	Chromosome	GL000194.1	=	NT_113888.1	Primary Assembly	191469	chr14_GL000194v1_random
+HSCHRUN_RANDOM_CTG1	unplaced-scaffold	na	na	GL000195.1	=	NT_113901.1	Primary Assembly	182896	chrUn_GL000195v1
+HG1_PATCH	fix-patch	14	Chromosome	KZ208920.1	=	NW_018654722.1	PATCHES	690932	chr14_KZ208920v1_fix
+HSCHR6_MHC_APD_CTG1	alt-scaffold	6	Chromosome	GL000250.2	=	NT_167244.2	ALT_REF_LOCI_1	4672374	chr6_GL000250v2_alt

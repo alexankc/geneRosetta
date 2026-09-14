@@ -1,0 +1,481 @@
+---
+title: "Getting Started with geneRosetta"
+format: 
+  html:
+    toc: true
+    theme: cosmo
+    css: styles.css
+    df-print: kable
+vignette: >
+   %\VignetteIndexEntry{Getting Started with geneRosetta}
+   %\VignetteEngine{quarto::quarto}
+   %\VignetteEncoding{UTF-8}
+execute:
+  echo: true
+  message: true
+  warning: true
+---
+
+
+```{r}
+#| label: setup
+#| include: false
+
+# Disable ANSI terminal escapes in rendered HTML documents
+options(cli.num_colors = 1, crayon.enabled = FALSE)
+
+```
+
+
+
+# Overview
+
+Comparing your gene lists across studies (especially older ones) can be frustrating. Gene symbols change, IDs are deprecated, and different databases sometimes disagree. This makes it hard to compare results across studies, or even to reproduce your own analysis after a few months.
+
+`geneRosetta` solves this problem by building a multi-source reference and uses it to map gene symbols and IDs.
+The package combines several sources:
+
+| Species | Sources |
+|---|---|
+| Human | Ensembl, NCBI Gene and HGNC |
+| Mouse | Ensembl, NCBI Gene and MGI |
+| Rat | Ensembl, NCBI Gene and RGD |
+
+Combining sources helps recover aliases and records missing from one database.
+
+Unlike packages with static, outdated reference data — or those that need a live server connection for every lookup, which can fail in the middle of an analysis — it downloads the references from every source in real-time, merges them, and caches the merged reference locally.
+
+Are you completely offline? No problem - use the built-in cached data. Need to update your reference? Refresh it using the most recently available data.
+
+Furthermore, `geneRosetta` is designed to forgive real-world messy inputs: it automatically trims surrounding whitespace, ignores case differences, and strips version numbers from Ensembl IDs (e.g., converting `ENSG00000141510.5` to `ENSG00000141510`).
+
+::: {.pkg-callout .pkg-callout-note}
+::: {.pkg-callout-header}
+Species Note
+:::
+::: {.pkg-callout-body}
+Choose the species that matches your experiment. These functions map identifiers within a species; they do not find equivalent orthologs across species.
+:::
+:::
+
+# Installation
+
+```{r, eval=F}
+if (!require("remotes")) install.packages("remotes")
+remotes::install_github("alexankc/geneRosetta")
+
+# or
+
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github("alexankc/geneRosetta")
+```
+
+
+# Step 1: Build Merged Annotation
+
+:::: {.pkg-callout .pkg-callout-note}
+::: {.pkg-callout-header}
+How geneRosetta builds Annotations
+:::
+::: {.pkg-callout-body}
+1. **Multi-Tier Matching**
+
+   First, Ensembl, NCBI, and official naming authorities (HGNC, MGI, or RGD) are linked using Ensembl IDs. If a gene isn't found that way, the pipeline "rescues" it by looking for matches using NCBI IDs or the common gene symbol.
+
+2. **Smart Prioritization**
+
+   When different databases disagree, the following rules are used:
+   * **Official Symbols:** Species-specific authority symbols come first (such as HGNC, MGI, or RGD).
+   * **Map Locations:** Ensembl coordinates are preferred (start, end, and chromosome).
+   * **Synonym Cleaning:** All gene synonyms/aliases found across all three databases are gathered in a single list.
+
+3. **Extended Coverage**
+
+   A record can be retained even when it lacks a current Ensembl ID (for example, if recognized by HGNC or NCBI). This broadens your lookup coverage, though some recognized genes may not have every ID type.
+:::
+::::
+
+
+```{r}
+library(geneRosetta)
+
+annot <- buildAnnotation(species = "human") # "human", "mouse", "rat" are supported
+```
+
+The annotation file and corresponding log file are both stored in the user's local cache directory by default (using `tools::R_user_dir()`). This ensures data is saved across R sessions while keeping the project folder clean. You can optionally store files in a custom directory by setting `annotation_dir`.
+
+This cached annotation will be sufficiently updated for some time. However, if you want to refresh it with the latest online data, run:
+
+```{r, eval=FALSE}
+annot <- buildAnnotation(species = "human", force_update = TRUE)
+```
+
+### Working completely offline
+
+If you are working on a cluster node without internet access or need strictly reproducible, air-gapped execution, use `offline = TRUE`:
+
+```{r, eval=FALSE}
+annot <- buildAnnotation(species = "human", offline = TRUE)
+```
+
+Offline mode will use your locally cached data or bundled package data where available, without making any external network requests.
+
+Internally `buildAnnotation()` calls:
+
+- For species=human: `buildHumanAnnotation()` which in turn calls `getAnnotationBiomart(species = "human", version = "current")`, `getAnnotationNCBI(species = "human")` and `getAnnotationHGNChuman()`. 
+- For species=mouse: `buildMouseAnnotation()` which in turn calls `getAnnotationBiomart(species = "mouse", version = "current")`, `getAnnotationNCBI(species = "mouse")` and `getAnnotationMGImouse()`.
+- For species=rat: `buildRatAnnotation()` which in turn calls `getAnnotationBiomart(species = "rat", version = "current")`, `getAnnotationNCBI(species = "rat")` and `getAnnotationRGDrat(genome_build = "GRCr8")`.
+
+
+:::: {.pkg-callout .pkg-callout-important}
+::: {.pkg-callout-header}
+Important
+:::
+::: {.pkg-callout-body}
+Only the output of `buildAnnotation()` or `getAnnotationBiomart()` should be used for downstream mapping with `geneRosetta`.
+:::
+::::
+
+
+### Reference Anatomy
+
+The merged table produced by `buildAnnotation()` contains standardized columns across databases:
+
+| Column | Description |
+|---|---|
+| `gene_symbol` | Current official gene symbol (prioritizing naming authority) |
+| `ensembl_id` | Ensembl gene identifier |
+| `ncbi_id` | NCBI Entrez Gene identifier |
+| `hgnc_id` / `mgi_id` / `rgd_id` | Species-specific authority accession |
+| `gene_biotype` | Gene classification (e.g., protein_coding, lncRNA, pseudogene) |
+| `chromosome`, `gene_start`, `gene_end`, `strand` | Genomic coordinates and orientation (stored as character strings) |
+| `metadata_source` | Source database providing the coordinates and metadata |
+| `gene_synonyms` | Aggregated aliases and past symbols, separated by `\|` |
+
+
+### Chromosome labels and `chromosome_scope`
+
+Genes on standard chromosomes are reported with bare names (`"14"`, `"X"`, `"MT"`). Everything else - unplaced and unlocalized scaffolds, alternate haplotypes, and patch releases - is labelled `chr<molecule>(<GenBank accession>)`, resolved against the NCBI assembly report for the exact genome build Ensembl is serving.
+
+So the unlocalized scaffold carrying `MAFIP` is reported as `chr14(GL000194.1)`, and a scaffold with no assigned molecule becomes `chrUn(<accession>)`. The label always carries the GenBank accession, making it identifiable across Ensembl versions.
+
+These sequences are included by default, but you can narrow them using the `chromosome_scope` argument in `getAnnotationBiomart()`:
+
+| Scope | Keeps |
+|---|---|
+| `"all"` (default) | All sequences |
+| `"primary"` | Sequences in standard chromosomes + unlocalized/unplaced scaffolds, excluding alternate haplotype scaffolds (e.g., HLA regions) and patches |
+| `"standard"` | Sequences in standard chromosomes only (1-22, X, Y, MT) |
+
+```{r, eval=F}
+# Everything Ensembl reports (default)
+all_genes <- getAnnotationBiomart("human")
+
+# Drop alternate haplotypes and patches, but keep scaffolds like chr14(GL000194.1)
+primary_only <- getAnnotationBiomart("human", chromosome_scope = "primary")
+
+# Standard chromosomes only
+standard_only <- getAnnotationBiomart("human", chromosome_scope = "standard")
+```
+
+
+:::: {.pkg-callout .pkg-callout-note}
+::: {.pkg-callout-header}
+Filtering Merged Annotations
+:::
+::: {.pkg-callout-body}
+`buildAnnotation()` always merges with `chromosome_scope = "all"`. Because the `chromosome` column is self-describing, you can easily filter the merged table afterwards:
+
+```r
+# Filter out scaffolds, alternate haplotypes, and patches:
+annot_standard <- subset(annot, !is.na(chromosome) & !grepl("^chr", chromosome))
+```
+:::
+::::
+
+
+### Version control & Manuscript Methods
+
+Annotations change frequently, so keeping track of metadata matters. Log files record what was downloaded, when, and from which source release. ***Run this after building your annotation***.
+
+The log summary can be printed to the console or exported in various formats:
+
+| `export_format` | Description |
+|---|---|
+| `"none"` (default) | Interactive formatted summary in the R console |
+| `"txt"` | Human-readable text report |
+| `"json"` | Full structured JSON log with all source URLs, timestamps, and row counts |
+| `"methods"` | Auto-generated Methods paragraph tailored for manuscripts |
+
+```{r, eval=F}
+# Text log for your records
+getAnnotationLogSummary(species = "human", export_format = "txt", export_path = "logs/merged_annotation.txt")
+
+# Export structured JSON
+getAnnotationLogSummary(species = "human", export_format = "json", export_path = "logs/merged_annotation.json")
+
+# Generate a publication-ready Methods paragraph for your manuscript:
+getAnnotationLogSummary(species = "human", export_format = "methods", export_path = "logs/annotation_methods.txt")
+```
+
+The `"methods"` export produces a clean paragraph describing the database releases, access dates, and build procedures, which you can paste directly into your paper's Methods section:
+
+```{r}
+getAnnotationLogSummary(species = "human", export_format = "methods")
+cat(readLines("human_annotation_methods.txt", warn = FALSE), sep = "\n")
+```
+
+For reproducibility reasons, you can pin a specific Ensembl archive release via `biomaRt`:
+
+```{r, eval=F}
+annot_biomart <- getAnnotationBiomart(
+  species = "human", # "human", "mouse", "rat" are supported
+  version = "114"    # pins Ensembl release 114
+)
+getAnnotationLogSummary(species = "human", export_format = "txt", ensembl_annot = TRUE, export_path = "logs/biomart_annotation.txt")
+```
+
+If that specific archive is temporarily unavailable (biomaRt servers down again...), the latest saved cached annotation is used.
+
+
+# Step 2: Map gene symbols ↔ gene IDs (Ensembl/NCBI)
+
+## Gene Symbols → Gene IDs
+
+Here, we face the big problem of frequent gene symbol changes.
+Nomenclature changes whenever the scientific community discovers a new function - or - whenever Excel decides a gene name looks suspiciously like a calendar date.
+
+This is why mapping is performed in two phases (passes):
+
+1. **Exact Match:** Matching the input symbol as provided.
+2. **Alias Search:** Searching the input against known gene synonyms and historical aliases.
+
+For example, although `p53` is a widely used gene symbol for Tumor Protein P53, the official symbol is `TP53`. If `p53` is searched against a strict official database, there would not be any match. With the second pass, the symbol is "rescued".
+
+Another challenge is that one symbol can sometimes map to multiple gene IDs. In that case, choose a strategy via `multi_handling`:
+
+* `keepAll`: one row per match (all mappings preserved; may expand rows)
+* `collapse`: one row per input, values joined with `|` (cleaner table; prevents row expansion)
+* `unique`: keep one mapping only (first sorted match; prevents row expansion)
+
+When `multi_handling = "unique"` is used for symbol mapping, it prioritizes records with a non-missing `ensembl_id` and sorts by `ensembl_id`.
+
+Multi-mapping typically has two distinct biological causes:
+
+1. **Genuinely distinct loci** — for example `CD99`, which sits in the pseudoautosomal region (PAR) and has separate functional IDs on the X and Y chromosomes.
+2. **Alternate haplotype copies** — genes such as `HLA-A` appear once on the primary assembly (chromosome `6`) and again on each alternative haplotype scaffold (e.g., `chr6(GL000256.2)`). Their `chromosome` values carry the `chr6(...)` form, making them easy to spot and filter out.
+
+
+### Vectors as input
+
+In this example, we include:
+
+* `" p53 "`: gene whose name has been updated (`TP53`), with leading/trailing spaces to test whitespace trimming
+* `INS`: standard gene symbol
+* `CD99`: gene with multiple Ensembl IDs on X & Y
+* `FAKEGENE`: intentionally invalid gene symbol
+
+```{r}
+id_lookup <- mapSymbolToID(
+	input_data = c(" p53 ", "INS", "CD99", "FAKEGENE"), # input as vector
+	annotation = annot,
+	add_metadata = FALSE
+)
+```
+
+Console output summarizes what happened.
+
+The returned list object contains:
+
+#### Mapped symbols
+
+```{r}
+id_mapped <- id_lookup$mapped # mapped genes
+
+id_mapped
+```
+
+Input symbols are stored in `query_gene_symbol`, and current official symbols in `gene_symbol` (showing updates like `p53` → `TP53`).
+
+#### Symbols with no match in 1st pass (before alias rescue)
+
+```{r}
+id_unmapped_firstPass <- id_lookup$unmapped_primary # genes not mapped in the first passage
+id_unmapped_firstPass
+```
+
+#### Symbols with no match in 1st + 2nd pass
+
+```{r}
+id_unmapped_final <- id_lookup$unmapped_final # completely unmapped genes
+id_unmapped_final
+```
+
+#### Symbols with multiple ID matches
+
+```{r}
+id_multi_mapped <- id_lookup$multi_mapped # genes that mapped to multiple IDs
+id_multi_mapped
+```
+
+You can include extra metadata (NCBI + naming authority IDs, biotype, genomic coordinates, description) with `add_metadata = TRUE` (default):
+
+```{r}
+id_lookup <- mapSymbolToID(
+	input_data = c(" p53 ", "INS", "CD99", "FAKEGENE"),
+	annotation = annot,
+	add_metadata = TRUE 
+)
+id_lookup$mapped
+```
+
+Because `CD99` maps to multiple Ensembl IDs, `keepAll` prints one row per match. Use `multi_handling = "collapse"` for one-row summaries:
+
+```{r}
+id_lookup <- mapSymbolToID(
+	input_data = c(" p53 ", "INS", "CD99", "FAKEGENE"),
+	annotation = annot,
+	add_metadata = TRUE,
+  multi_handling = "collapse"
+)
+id_lookup$mapped
+```
+
+Now multiple values are joined with `|` in a single row.
+
+:::: {.pkg-callout .pkg-callout-note}
+::: {.pkg-callout-header}
+Note on Collapsed Columns
+:::
+::: {.pkg-callout-body}
+When `multi_handling = "collapse"` is used, each column is collapsed independently. If strict row-by-row linkage between IDs and coordinates is required, keep `multi_handling = "keepAll"`.
+:::
+::::
+
+By default, unmapped genes are omitted from the `mapped` table (they are always accessible in `id_lookup$unmapped_final`). Set `keep_unmapped = TRUE` to keep them in the output table with `NA` values:
+
+```{r}
+id_lookup <- mapSymbolToID(
+	input_data = c(" p53 ", "INS", "CD99", "FAKEGENE"),
+	annotation = annot,
+	add_metadata = TRUE,
+  multi_handling = "collapse",
+  keep_unmapped = TRUE
+)
+id_lookup$mapped
+```
+
+
+### Dataframes as input
+
+You can also pass a full dataframe (such as differential expression results) and specify the symbol column using `col_id`. This is handy when your table already contains statistics (for example, gene expression results) and you want your results and the annotation data in one step.
+
+```{r}
+test_df_symbols <- data.frame(
+  comparison = c("A_vs_B", "A_vs_C", "A_vs_B", "A_vs_B", "A_vs_B", "A_vs_B"),
+  symbol_input = c("INS", "INS", "C1orf123", "POLR2J3", "FAKE", NA), 
+  log2FC = c(2.5, -1.2, 0.5, 0.2, 0.5, 0.6),
+  p_val = c(0.001, 0.05, 0.1, 0.65, 0.8, 1),
+  stringsAsFactors = FALSE
+)
+
+test_df_annotated <- mapSymbolToID(
+  input_data = test_df_symbols,
+  annotation = annot,
+  col_id = "symbol_input", 
+  add_metadata = TRUE, 
+  multi_handling = "collapse", 
+  keep_unmapped = TRUE
+)
+
+test_df_annotated$mapped
+```
+
+:::: {.pkg-callout .pkg-callout-tip}
+::: {.pkg-callout-header}
+Tips for Annotating Dataframes
+:::
+::: {.pkg-callout-body}
+* **Handling Name Collisions:** If your input dataframe already has columns with the same names as the annotation (`ensembl_id`, `gene_biotype`, `chromosome`, `gene_start`, `gene_end`, `strand`, `gene_description`), the `query_` prefix is automatically added to the original column names, so you can compare old and new values.
+* **Tracking Expanded Rows:** If you choose `multi_handling = "keepAll"` on a dataframe, multi-mapped genes will expand into multiple rows. Having an optional row or observation ID in your table can make it easier to trace expanded rows back and avoid overcounting measurements in downstream enrichment tests.
+:::
+::::
+
+
+## Gene IDs → Gene Symbols
+
+`mapIDToSymbol()` accepts a vector or dataframe column of **Ensembl gene IDs** or **NCBI Gene (Entrez) IDs** and auto-detects the ID type.
+
+Key details to know about ID mapping:
+
+* **Single-Pass:** Unlike symbol mapping (which has an alias rescue pass), ID mapping is a single-pass lookup.
+* **Suffix & Space Trimming:** Version numbers on Ensembl IDs (e.g., `.5` in `ENSG00000141510.5`) are automatically stripped, and leading/trailing whitespace is removed.
+* **Default Output:** Like `mapSymbolToID()`, `keep_unmapped = FALSE` by default. Set `keep_unmapped = TRUE` if you wish to retain unmapped IDs in the output table.
+
+### Mapping Ensembl IDs
+
+In this example, we include a mix of versioned, whitespace, multi-mapped, and unmapped IDs:
+
+* `"ENSG00000141510.5"`: versioned Ensembl ID (`TP53`)
+* `" ensg00000012048 "`: Ensembl ID with whitespace and lowercase formatting (`BRCA1`)
+* `"ENSG00000226087"`: multi-mapped Ensembl ID (maps to both `LOC105374588` and `LOC124907763`)
+* `"ENSG00000000000"`: non-existent/unmapped Ensembl ID
+
+```{r}
+genes_df <- data.frame(
+	gene_ids = c("ENSG00000141510.5", " ensg00000012048 ", "ENSG00000226087", "ENSG00000000000"),
+	scores = c(5, 3, 2, 1)
+)
+
+symbol_lookup <- mapIDToSymbol(
+	input_data = genes_df, # input as dataframe
+	col_id = "gene_ids",
+	annotation = annot,
+	multi_handling = "keepAll",
+	keep_unmapped = TRUE
+)
+
+symbol_lookup$mapped
+```
+
+Like `mapSymbolToID()`, the returned object carries the mapped table and diagnostic diagnostics:
+
+```{r}
+symbol_lookup$unmapped # IDs with no matching gene symbol
+```
+
+```{r}
+symbol_lookup$multi_mapped # IDs matching more than one symbol
+```
+
+### Mapping NCBI / Entrez IDs
+
+If input is a number/numeric vector, it is assumed to represent NCBI / Entrez IDs.
+
+```{r}
+ncbi_lookup <- mapIDToSymbol(
+  input_data = c("7157", "672"), # TP53 and BRCA1
+  annotation = annot,
+  add_metadata = TRUE
+)
+
+ncbi_lookup$mapped
+```
+
+
+# Troubleshooting & Tips
+
+| What you see | Likely cause & Recommended action |
+|---|---|
+| **Many unmapped symbols** | Confirm species matches your data. Check if your inputs are IDs rather than symbols, or if a spreadsheet tool altered names to dates (e.g., `SEPT4` $\rightarrow$ `Sept-04`). |
+| **Row count increased after mapping** | When using `multi_handling = "keepAll"`, multi-mapped loci create multiple rows. Filter by standard chromosomes or track rows using an observation ID. |
+| **Gene symbol found, but `ensembl_id` is blank** | HGNC or NCBI recognized the gene, but no Ensembl link currently exists. Inspect `ncbi_id` or authority IDs in the metadata. |
+| **ID-type detection error** | Ensure you do not mix Ensembl IDs and NCBI IDs in the same vector. Map each identifier type in a separate call. |
+| **Log summary finds nothing** | Make sure the `annotation_dir` parameter passed to `getAnnotationLogSummary()` matches the directory used in `buildAnnotation()`. |
+
+
+# Session Information
+
+```{r}
+sessionInfo()
+```

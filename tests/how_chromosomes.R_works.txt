@@ -1,0 +1,104 @@
+buildAnnotation() → chromosomes.R workflow
+
+buildAnnotation("human")
+        │
+        ▼
+buildHumanAnnotation()  (in mergeAnnotations.R)
+        │
+        ├──▶ getAnnotationBiomart("human")   ─┐
+        ├──▶ getAnnotationNCBI("human")       │  each calls into
+        └──▶ getAnnotationHGNChuman()        ─┘  chromosomes.R:
+                        │
+                        ▼
+        .get_assembly_report(species, genome_build)
+          - resolves NCBI report URL for the exact Ensembl build
+          - downloads (or reuses cached) assembly report
+                        │
+                        ▼
+        .chromosome_lookup(report)
+          - builds alias→label map + accession→role map
+                        │
+                        ▼
+        .format_chromosome(raw_chromosome_names, lookup)
+          - "1" stays "1"
+          - "GL000194.1" → "chr14(GL000194.1)"
+                        │
+                        ▼
+        .filter_chromosome_scope(df, chromosome_scope, lookup)
+          - "standard" / "primary" / "all" narrows rows
+          - (only exposed as a user arg on getAnnotationBiomart)
+        │
+        ▼
+   df_bm, df_ncbi, df_hgnc  (each now has a labeled `chromosome` column)
+        │
+        ▼
+buildHumanAnnotation() merges the three on ensembl_id/symbol
+        │
+        ▼
+Merged annotation table — `chromosome` column self-describing,
+e.g. MAFIP → chr14(GL000194.1)
+Key point: chromosomes.R never touches merge logic directly — it's a service layer that each getAnnotation*() source function calls to translate/filter its own chromosome column before buildAnnotation()'s mergers stitch the sources together. Because the merge is BioMart-anchored (every join hangs off df_bm), getAnnotationBiomart()'s use of .format_chromosome()/.filter_chromosome_scope() is what determines which scaffold genes (like MAFIP) survive into the final merged table at all.
+
+Expand on how chromosome_lookup(report) step works
+Here's a step-by-step trace through .chromosome_lookup() (chromosomes.R:225-246), using rows like the ones in the test fixture.
+
+Input
+A parsed assembly report tibble — one row per NCBI sequence, with columns sequence_name, sequence_role, assigned_molecule, genbank_accn, refseq_accn, ucsc_style_name, etc. Example rows:
+
+sequence_name	sequence_role	assigned_molecule	genbank_accn
+14	assembled-molecule	14	CM000676.2
+HG1_PATCH	fix-patch	14	KZ208920.1
+1 (unlocalized)	unlocalized-scaffold	14	GL000194.1
+—	unplaced-scaffold	na	GL000195.1
+HSCHR6_MHC_APD_CTG1	alt-scaffold	6	GL000250.2
+Step 1 — Drop assembled molecules
+
+scaffolds <- report[report$sequence_role != "assembled-molecule", , drop = FALSE]
+Only non-standard sequences need a lookup entry — plain chromosomes like 14 already pass through .format_chromosome() untouched via the .STANDARD_CHROMOSOMES fast path. This shrinks the report from ~250k+ human rows to a few hundred scaffold rows.
+
+Step 2 — Build the display label
+
+molecule <- scaffolds$assigned_molecule
+molecule[is.na(molecule) | molecule %in% c("na", "")] <- "Un"
+label <- paste0("chr", molecule, "(", scaffolds$genbank_accn, ")")
+GL000194.1 (assigned to molecule 14) → label chr14(GL000194.1)
+GL000195.1 (assigned molecule is literally "na" in the report) → molecule becomes "Un" → label chrUn(GL000195.1)
+GL000250.2 (assigned to 6) → chr6(GL000250.2)
+One label per scaffold row, always keyed on the GenBank accession — never the Ensembl sequence name — so the label is stable regardless of which alias resolved it.
+
+Step 3 — Expand every alias into a flat alias→label table
+
+alias_cols <- c("sequence_name", "genbank_accn", "refseq_accn", "ucsc_style_name")
+aliases <- unlist(scaffolds[alias_cols], use.names = FALSE)
+labels  <- rep(label, times = length(alias_cols))
+This is the crucial trick. Ensembl doesn't consistently use one naming scheme — some scaffolds it names by accession, others by sequence name. Rather than guessing which column Ensembl used, .chromosome_lookup() indexes all four possible aliases against the same label:
+
+For the HG1_PATCH row (label chr14(KZ208920.1)), this generates four alias entries, all mapping to that same label:
+
+sequence_name = "HG1_PATCH" → chr14(KZ208920.1)
+genbank_accn = "KZ208920.1" → chr14(KZ208920.1)
+refseq_accn = "..." → chr14(KZ208920.1)
+ucsc_style_name = "..." → chr14(KZ208920.1)
+So whichever name Ensembl happens to hand .format_chromosome() — "HG1_PATCH" or "KZ208920.1" — it resolves to the identical label.
+
+Step 4 — Drop empty/missing aliases
+
+keep <- !is.na(aliases) & nzchar(aliases) & aliases != "na"
+aliases <- aliases[keep]
+labels  <- labels[keep]
+NCBI reports use literal "na" strings (not real NA) for absent fields (e.g. a scaffold with no RefSeq accession yet). Those get filtered out here so they don't pollute the lookup with a bogus "na" → chr14(...) mapping.
+
+Step 5 — Deduplicate, keeping the first occurrence
+
+first <- !duplicated(aliases)
+If two different alias columns happen to produce the same string, only the first mapping wins — this keeps the lookup a clean 1:1 alias→label vector suitable for named-vector indexing (lookup$label["GL000194.1"]).
+
+Step 6 — Return two named vectors
+
+list(
+  label    = stats::setNames(labels[first], aliases[first]),
+  acc_role = stats::setNames(scaffolds$sequence_role, scaffolds$genbank_accn)
+)
+label: alias → display label. Used by .format_chromosome() for O(1) named-vector lookup.
+acc_role: GenBank accession → NCBI sequence role ("unlocalized-scaffold", "alt-scaffold", etc.). Used later by .chromosome_role() to recover why a formatted label was included, so .filter_chromosome_scope() can apply the standard/primary/all cutoff.
+Net effect: for human, this indexes all 503 non-standard names with zero unmatched — keying on accession alone would miss 458 of them (named by sequence name instead, like HG1_PATCH); keying on sequence name alone would miss 45, including MAFIP's GL000194.1.

@@ -1,0 +1,7 @@
+{
+  "data_access_timestamp": "2026-07-10T17:03:51Z",
+  "ensembl_version": "Ensembl_Genes_116",
+  "genome_build": "GRCr8",
+  "mart_dataset": "rnorvegicus_gene_ensembl",
+  "biomart_pkg_version": "2.66.0"
+}

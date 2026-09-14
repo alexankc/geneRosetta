@@ -1,0 +1,6 @@
+inst/doc
+ToDo.txt
+test.R
+/.quarto/
+**/*.quarto_ipynb
+docs

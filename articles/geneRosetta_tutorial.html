@@ -55,7 +55,7 @@
 
 
 
-      <small class="dont-index">Source: <a href="https://github.com/alexankc/geneRosetta/blob/main/vignettes/geneRosetta_tutorial.qmd" class="external-link"><code>vignettes/geneRosetta_tutorial.qmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/alexankc/geneRosetta/blob/v1.0.0/vignettes/geneRosetta_tutorial.qmd" class="external-link"><code>vignettes/geneRosetta_tutorial.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
     </div>
 
@@ -158,9 +158,6 @@
 <pre><code>ℹ Connecting to Ensembl...</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Ensembl site unresponsive, trying useast mirror</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
 <pre><code>Ensembl site unresponsive, trying asia mirror</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
@@ -171,17 +168,15 @@
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>ℹ Downloading NCBI assembly report for human...
-✔ Downloading NCBI assembly report for human... [473ms]
+✔ Downloading NCBI assembly report for human... [395ms]
 
 ℹ Connecting to Ensembl...
-✔ Connecting to Ensembl... [20.4s]
+✔ Connecting to Ensembl... [10.6s]
 
 ℹ Connecting to Ensembl and querying...
-ℹ Materializing bundled reference data into cache (may be outdated).
+✔ Data and metadata log saved to disk.
 ℹ Connecting to Ensembl and querying...
-! Ensembl is currently unresponsive; using bundled package data.
-ℹ Connecting to Ensembl and querying...
-✔ Connecting to Ensembl and querying... [11s]
+✔ Connecting to Ensembl and querying... [11.9s]
 
 ℹ Downloading and parsing NCBI data...
 ℹ Downloading and parsing NCBI GFF3 (GCF_000001405.40_GRCh38.p14)...
@@ -189,17 +184,17 @@
 ℹ Downloading and parsing NCBI GFF3 (GCF_000001405.40_GRCh38.p14)...
 ✔ Cache is up-to-date (2024-09-28). Loading...
 ℹ Downloading and parsing NCBI GFF3 (GCF_000001405.40_GRCh38.p14)...
-✔ Downloading and parsing NCBI GFF3 (GCF_000001405.40_GRCh38.p14)... [1m 51.7s]
+✔ Downloading and parsing NCBI GFF3 (GCF_000001405.40_GRCh38.p14)... [1m 45.5s]
 
 ℹ Downloading and parsing NCBI data...
 ✔ Data and metadata log saved to disk.
 ℹ Downloading and parsing NCBI data...
-✔ Downloading and parsing NCBI data... [1m 58.4s]
+✔ Downloading and parsing NCBI data... [1m 50.5s]
 
 ℹ Downloading and processing HGNC data...
 ✔ Data and metadata log saved to disk.
 ℹ Downloading and processing HGNC data...
-✔ Downloading and processing HGNC data... [4.1s]
+✔ Downloading and processing HGNC data... [4s]
 
 Merging annotations...
 ────────────────────────────────────────────────────────────────────────────────
@@ -210,14 +205,14 @@ Merging annotations...
 <p>The annotation file and corresponding log file are both stored in the user’s local cache directory by default (using <code><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">tools::R_user_dir()</a></code>). This ensures data is saved across R sessions while keeping the project folder clean. You can optionally store files in a custom directory by setting <code>annotation_dir</code>.</p>
 <p>This cached annotation will be sufficiently updated for some time. However, if you want to refresh it with the latest online data, run:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/buildAnnotation.html">buildAnnotation</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"human"</span>, force_update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <section class="level3"><h4 id="working-completely-offline">Working completely offline<a class="anchor" aria-label="anchor" href="#working-completely-offline"></a>
 </h4>
 <p>If you are working on a cluster node without internet access or need strictly reproducible, air-gapped execution, use <code>offline = TRUE</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/buildAnnotation.html">buildAnnotation</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"human"</span>, offline <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Offline mode will use your locally cached data or bundled package data where available, without making any external network requests.</p>
@@ -318,7 +313,7 @@ Merging annotations...
 </tbody>
 </table>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Everything Ensembl reports (default)</span></span>
 <span><span class="va">all_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAnnotationBiomart.html">getAnnotationBiomart</a></span><span class="op">(</span><span class="st">"human"</span><span class="op">)</span></span>
 <span></span>
@@ -334,7 +329,7 @@ Merging annotations...
 </div>
 <div class="pkg-callout-body">
 <p><code><a href="../reference/buildAnnotation.html">buildAnnotation()</a></code> always merges with <code>chromosome_scope = "all"</code>. Because the <code>chromosome</code> column is self-describing, you can easily filter the merged table afterwards:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Filter out scaffolds, alternate haplotypes, and patches:</span></span>
 <span><span class="va">annot_standard</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">annot</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">chromosome</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^chr"</span>, <span class="va">chromosome</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -373,7 +368,7 @@ Merging annotations...
 </tbody>
 </table>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Text log for your records</span></span>
 <span><span class="fu"><a href="../reference/getAnnotationLogSummary.html">getAnnotationLogSummary</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"human"</span>, export_format <span class="op">=</span> <span class="st">"txt"</span>, export_path <span class="op">=</span> <span class="st">"logs/merged_annotation.txt"</span><span class="op">)</span></span>
 <span></span>
@@ -385,12 +380,12 @@ Merging annotations...
 </div>
 <p>The <code>"methods"</code> export produces a clean paragraph describing the database releases, access dates, and build procedures, which you can paste directly into your paper’s Methods section:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getAnnotationLogSummary.html">getAnnotationLogSummary</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"human"</span>, export_format <span class="op">=</span> <span class="st">"methods"</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>✔ Methods text exported to 'human_annotation_methods.txt'</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="st">"human_annotation_methods.txt"</span>, warn <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Human gene annotations were generated using geneRosetta (v1.0.0; https://github.com/alexankc/geneRosetta) by integrating Ensembl release 116 (GRCh38.p14), the NCBI Gene database (accessed September 2026), and the HGNC complete gene set (accessed September 2026). Records were first matched by Ensembl gene IDs, with unmatched records cross-referenced against NCBI Gene IDs; HGNC-approved gene symbols were preferred as primary symbols, while conflicting source symbols were retained as synonyms. Coding genes, non-coding RNAs, and pseudogenes were retained; records lacking both an Ensembl and an NCBI identifier were excluded, resulting in a final merged reference set containing 234,128 unique entries.</code></pre>
@@ -398,7 +393,7 @@ Merging annotations...
 </div>
 <p>For reproducibility reasons, you can pin a specific Ensembl archive release via <code>biomaRt</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annot_biomart</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAnnotationBiomart.html">getAnnotationBiomart</a></span><span class="op">(</span></span>
 <span>  species <span class="op">=</span> <span class="st">"human"</span>, <span class="co"># "human", "mouse", "rat" are supported</span></span>
 <span>  version <span class="op">=</span> <span class="st">"114"</span>    <span class="co"># pins Ensembl release 114</span></span>
@@ -450,7 +445,7 @@ Merging annotations...
 <code>FAKEGENE</code>: intentionally invalid gene symbol</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_lookup</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapSymbolToID.html">mapSymbolToID</a></span><span class="op">(</span></span>
 <span>    input_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">" p53 "</span>, <span class="st">"INS"</span>, <span class="st">"CD99"</span>, <span class="st">"FAKEGENE"</span><span class="op">)</span>, <span class="co"># input as vector</span></span>
 <span>    annotation <span class="op">=</span> <span class="va">annot</span>,</span>
@@ -489,7 +484,7 @@ Merging annotations...
 <section class="level4"><h5 id="mapped-symbols">Mapped symbols<a class="anchor" aria-label="anchor" href="#mapped-symbols"></a>
 </h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_mapped</span> <span class="op">&lt;-</span> <span class="va">id_lookup</span><span class="op">$</span><span class="va">mapped</span> <span class="co"># mapped genes</span></span>
 <span></span>
 <span><span class="va">id_mapped</span></span></code></pre></div>
@@ -531,7 +526,7 @@ Merging annotations...
 </section><section class="level4"><h5 id="symbols-with-no-match-in-1st-pass-before-alias-rescue">Symbols with no match in 1st pass (before alias rescue)<a class="anchor" aria-label="anchor" href="#symbols-with-no-match-in-1st-pass-before-alias-rescue"></a>
 </h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_unmapped_firstPass</span> <span class="op">&lt;-</span> <span class="va">id_lookup</span><span class="op">$</span><span class="va">unmapped_primary</span> <span class="co"># genes not mapped in the first passage</span></span>
 <span><span class="va">id_unmapped_firstPass</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -541,7 +536,7 @@ Merging annotations...
 </section><section class="level4"><h5 id="symbols-with-no-match-in-1st-2nd-pass">Symbols with no match in 1st + 2nd pass<a class="anchor" aria-label="anchor" href="#symbols-with-no-match-in-1st-2nd-pass"></a>
 </h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_unmapped_final</span> <span class="op">&lt;-</span> <span class="va">id_lookup</span><span class="op">$</span><span class="va">unmapped_final</span> <span class="co"># completely unmapped genes</span></span>
 <span><span class="va">id_unmapped_final</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -551,7 +546,7 @@ Merging annotations...
 </section><section class="level4"><h5 id="symbols-with-multiple-id-matches">Symbols with multiple ID matches<a class="anchor" aria-label="anchor" href="#symbols-with-multiple-id-matches"></a>
 </h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_multi_mapped</span> <span class="op">&lt;-</span> <span class="va">id_lookup</span><span class="op">$</span><span class="va">multi_mapped</span> <span class="co"># genes that mapped to multiple IDs</span></span>
 <span><span class="va">id_multi_mapped</span></span></code></pre></div>
 <div class="cell-output-display">
@@ -571,7 +566,7 @@ Merging annotations...
 </div>
 <p>You can include extra metadata (NCBI + naming authority IDs, biotype, genomic coordinates, description) with <code>add_metadata = TRUE</code> (default):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_lookup</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapSymbolToID.html">mapSymbolToID</a></span><span class="op">(</span></span>
 <span>    input_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">" p53 "</span>, <span class="st">"INS"</span>, <span class="st">"CD99"</span>, <span class="st">"FAKEGENE"</span><span class="op">)</span>,</span>
 <span>    annotation <span class="op">=</span> <span class="va">annot</span>,</span>
@@ -604,7 +599,7 @@ Merging annotations...
 <div class="cell-output cell-output-stderr">
 <pre><code>────────────────────────────────────────────────────────────────────────────────</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_lookup</span><span class="op">$</span><span class="va">mapped</span></span></code></pre></div>
 <div class="cell-output-display">
 <div class="kable-table">
@@ -701,7 +696,7 @@ Merging annotations...
 </div>
 <p>Because <code>CD99</code> maps to multiple Ensembl IDs, <code>keepAll</code> prints one row per match. Use <code>multi_handling = "collapse"</code> for one-row summaries:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_lookup</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapSymbolToID.html">mapSymbolToID</a></span><span class="op">(</span></span>
 <span>    input_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">" p53 "</span>, <span class="st">"INS"</span>, <span class="st">"CD99"</span>, <span class="st">"FAKEGENE"</span><span class="op">)</span>,</span>
 <span>    annotation <span class="op">=</span> <span class="va">annot</span>,</span>
@@ -735,7 +730,7 @@ Merging annotations...
 <div class="cell-output cell-output-stderr">
 <pre><code>────────────────────────────────────────────────────────────────────────────────</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_lookup</span><span class="op">$</span><span class="va">mapped</span></span></code></pre></div>
 <div class="cell-output-display">
 <div class="kable-table">
@@ -827,7 +822,7 @@ Merging annotations...
 </div>
 <p>By default, unmapped genes are omitted from the <code>mapped</code> table (they are always accessible in <code>id_lookup$unmapped_final</code>). Set <code>keep_unmapped = TRUE</code> to keep them in the output table with <code>NA</code> values:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_lookup</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapSymbolToID.html">mapSymbolToID</a></span><span class="op">(</span></span>
 <span>    input_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">" p53 "</span>, <span class="st">"INS"</span>, <span class="st">"CD99"</span>, <span class="st">"FAKEGENE"</span><span class="op">)</span>,</span>
 <span>    annotation <span class="op">=</span> <span class="va">annot</span>,</span>
@@ -862,7 +857,7 @@ Merging annotations...
 <div class="cell-output cell-output-stderr">
 <pre><code>────────────────────────────────────────────────────────────────────────────────</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">id_lookup</span><span class="op">$</span><span class="va">mapped</span></span></code></pre></div>
 <div class="cell-output-display">
 <div class="kable-table">
@@ -961,7 +956,7 @@ Merging annotations...
 </h4>
 <p>You can also pass a full dataframe (such as differential expression results) and specify the symbol column using <code>col_id</code>. This is handy when your table already contains statistics (for example, gene expression results) and you want your results and the annotation data in one step.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_df_symbols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A_vs_B"</span>, <span class="st">"A_vs_C"</span>, <span class="st">"A_vs_B"</span>, <span class="st">"A_vs_B"</span>, <span class="st">"A_vs_B"</span>, <span class="st">"A_vs_B"</span><span class="op">)</span>,</span>
 <span>  symbol_input <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INS"</span>, <span class="st">"INS"</span>, <span class="st">"C1orf123"</span>, <span class="st">"POLR2J3"</span>, <span class="st">"FAKE"</span>, <span class="cn">NA</span><span class="op">)</span>, </span>
@@ -1008,7 +1003,7 @@ Merging annotations...
 <div class="cell-output cell-output-stderr">
 <pre><code>────────────────────────────────────────────────────────────────────────────────</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_df_annotated</span><span class="op">$</span><span class="va">mapped</span></span></code></pre></div>
 <div class="cell-output-display">
 <div class="kable-table">
@@ -1194,7 +1189,7 @@ Merging annotations...
 <code>"ENSG00000000000"</code>: non-existent/unmapped Ensembl ID</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb82"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">genes_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>    gene_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000141510.5"</span>, <span class="st">" ensg00000012048 "</span>, <span class="st">"ENSG00000226087"</span>, <span class="st">"ENSG00000000000"</span><span class="op">)</span>,</span>
 <span>    scores <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span>
@@ -1234,7 +1229,7 @@ Merging annotations...
 <div class="cell-output cell-output-stderr">
 <pre><code>────────────────────────────────────────────────────────────────────────────────</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb92"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb91"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">symbol_lookup</span><span class="op">$</span><span class="va">mapped</span></span></code></pre></div>
 <div class="cell-output-display">
 <div class="kable-table">
@@ -1352,14 +1347,14 @@ Merging annotations...
 </div>
 <p>Like <code><a href="../reference/mapSymbolToID.html">mapSymbolToID()</a></code>, the returned object carries the mapped table and diagnostic diagnostics:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb93"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">symbol_lookup</span><span class="op">$</span><span class="va">unmapped</span> <span class="co"># IDs with no matching gene symbol</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "ENSG00000000000"</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb95"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb94"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">symbol_lookup</span><span class="op">$</span><span class="va">multi_mapped</span> <span class="co"># IDs matching more than one symbol</span></span></code></pre></div>
 <div class="cell-output-display">
 <div class="kable-table">
@@ -1382,7 +1377,7 @@ Merging annotations...
 </h4>
 <p>If input is a number/numeric vector, it is assumed to represent NCBI / Entrez IDs.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb96"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb95"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ncbi_lookup</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapIDToSymbol.html">mapIDToSymbol</a></span><span class="op">(</span></span>
 <span>  input_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"7157"</span>, <span class="st">"672"</span><span class="op">)</span>, <span class="co"># TP53 and BRCA1</span></span>
 <span>  annotation <span class="op">=</span> <span class="va">annot</span>,</span>
@@ -1406,7 +1401,7 @@ Merging annotations...
 <div class="cell-output cell-output-stderr">
 <pre><code>────────────────────────────────────────────────────────────────────────────────</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb103"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb102"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ncbi_lookup</span><span class="op">$</span><span class="va">mapped</span></span></code></pre></div>
 <div class="cell-output-display">
 <div class="kable-table">
@@ -1505,7 +1500,7 @@ Merging annotations...
 </table></section><section class="section level2"><h2 id="session-information">Session Information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb104"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb103"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.6.1 (2026-06-24)

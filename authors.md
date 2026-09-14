@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/alexankc/geneRosetta/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/alexankc/geneRosetta/blob/v1.0.0/DESCRIPTION)
 
 Karagiannopoulos A (2026). *geneRosetta: Gene Annotation Retrieval and
 Mapping Utilities*. R package version 1.0.0,
